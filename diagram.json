@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "author": "The Bin - Hack Club",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-pi-pico-w", "id": "pico", "top": 303.95, "left": -274.85, "attrs": {} },
+    { "type": "board-ds18b20", "id": "board-ds18b20-0", "top": 0, "left": 118, "attrs": {} },
+    {
+      "type": "wokwi-led-bar-graph",
+      "id": "wokwi-led-bar-graph-0",
+      "top": 264,
+      "left": 4.8,
+      "attrs": {}
+    },
+    {
+      "type": "board-ssd1306",
+      "id": "board-ssd1306-0",
+      "top": 502.34,
+      "left": -402.97,
+      "attrs": {}
+    },
+    { "type": "wokwi-dht22", "id": "wokwi-dht22-0", "top": 259.5, "left": -139.8, "attrs": {} },
+    { "type": "wokwi-pushbutton", "id": "wokwi-pushbutton-0", "top": 645, "left": 0, "attrs": {} },
+    {
+      "type": "wokwi-buzzer",
+      "id": "bz1",
+      "top": 271.2,
+      "left": -372.6,
+      "attrs": { "volume": "0.1" }
+    }
+  ],
+  "connections": [
+    [ "pico:GP0", "$serialMonitor:RX", "", [] ],
+    [ "pico:GP1", "$serialMonitor:TX", "", [] ],
+    [ "wokwi-ntc-temperature-sensor-0:GND", "pico:GND.1", "black", [ "h0" ] ],
+    [ "wokwi-ntc-temperature-sensor-0:VCC", "pico:GP1", "red", [ "h0" ] ],
+    [ "wokwi-ntc-temperature-sensor-0:OUT", "pico:GP27", "green", [ "h0" ] ],
+    [ "wokwi-dht22-0:VCC", "pico:GP27", "red", [ "v0" ] ],
+    [ "wokwi-dht22-0:SDA", "pico:GP26", "green", [ "v0" ] ],
+    [ "wokwi-dht22-0:GND", "pico:GND.7", "black", [ "v0" ] ],
+    [ "bz1:1", "pico:GND.2", "black", [ "v0" ] ],
+    [ "bz1:2", "pico:GP5", "red", [ "v0" ] ],
+    [ "board-ssd1306-0:GND", "pico:GND.4", "black", [ "v0" ] ],
+    [ "board-ssd1306-0:VCC", "pico:GP13", "red", [ "v0" ] ],
+    [ "board-ssd1306-0:SCL", "pico:GP15", "green", [ "v0" ] ],
+    [ "board-ssd1306-0:SDA", "pico:GP14", "green", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}
