@@ -8,8 +8,8 @@
     {
       "type": "wokwi-led-bar-graph",
       "id": "wokwi-led-bar-graph-0",
-      "top": 264,
-      "left": 4.8,
+      "top": 408,
+      "left": -24,
       "attrs": {}
     },
     {
@@ -20,13 +20,19 @@
       "attrs": {}
     },
     { "type": "wokwi-dht22", "id": "wokwi-dht22-0", "top": 259.5, "left": -139.8, "attrs": {} },
-    { "type": "wokwi-pushbutton", "id": "wokwi-pushbutton-0", "top": 645, "left": 0, "attrs": {} },
     {
       "type": "wokwi-buzzer",
       "id": "bz1",
       "top": 271.2,
       "left": -372.6,
       "attrs": { "volume": "0.1" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn1",
+      "top": 246.2,
+      "left": -268.8,
+      "attrs": { "color": "red" }
     }
   ],
   "connections": [
@@ -43,7 +49,9 @@
     [ "board-ssd1306-0:GND", "pico:GND.4", "black", [ "v0" ] ],
     [ "board-ssd1306-0:VCC", "pico:GP13", "red", [ "v0" ] ],
     [ "board-ssd1306-0:SCL", "pico:GP15", "green", [ "v0" ] ],
-    [ "board-ssd1306-0:SDA", "pico:GP14", "green", [ "v0" ] ]
+    [ "board-ssd1306-0:SDA", "pico:GP14", "green", [ "v0" ] ],
+    [ "btn1:2.r", "pico:GND.8", "black", [ "h0" ] ],
+    [ "btn1:1.l", "pico:GP2", "red", [ "h0" ] ]
   ],
   "dependencies": {}
 }
