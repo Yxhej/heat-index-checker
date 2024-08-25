@@ -23,7 +23,7 @@
       "id": "wokwi-dht22-0",
       "top": 317.1,
       "left": -418.2,
-      "attrs": { "temperature": "27.3", "humidity": "61" }
+      "attrs": { "temperature": "37.9", "humidity": "55" }
     },
     {
       "type": "wokwi-buzzer",
