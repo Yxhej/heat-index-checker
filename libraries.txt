@@ -6,4 +6,3 @@ Adafruit Unified Sensor
 Adafruit SSD1306
 Adafruit GFX Library
 Adafruit BusIO
-arduino-timer
