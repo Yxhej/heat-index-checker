@@ -18,8 +18,12 @@ DHT dht(DHTPIN, DHTTYPE);
 
 int lastPressed = 1;
 bool isFahrenheit = true;
-const float TEMP_THRESHOLD = 85;
 
+// fahrenheit
+const float HOT_THRESHOLD = 85;
+const float COLD_THRESHOLD = 30;
+
+// https://rickkas7.github.io/DisplayGenerator/
 const uint8_t warningIcon[] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x3c, 0x00, 0x00, 0x7e, 0x00, 0x00, 0xf7, 0x00, 0x00, 0xe7, 0x00, 0x01, 0xc3, 0x80, 0x01, 0xc3, 0x80, 0x03, 0x99, 0xc0, 0x07, 0x18, 0xe0, 0x07, 0x18, 0xe0, 0x0e, 0x18, 0x70, 0x0e, 0x18, 0x70, 0x1c, 0x18, 0x38, 0x38, 0x00, 0x1c, 0x38, 0x00, 0x1c, 0x70, 0x18, 0x0e, 0x70, 0x18, 0x0e, 0xe0, 0x00, 0x07, 0xe0, 0x00, 0x07, 0x7f, 0xff, 0xfe, 0x3f, 0xff, 0xfe, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 
 // ms
@@ -45,7 +49,6 @@ void setup() {
   pinMode(SPEAKER_PIN, OUTPUT);
 
   dht.begin();
-  displayWarning(100);
   previousTick = millis();
 }
 
@@ -72,9 +75,9 @@ void loop() {
 
   elapsedTime = millis();
   if (elapsedTime - previousTick > WARNING_PERIOD) {
-    if (temp > convert(TEMP_THRESHOLD)) {
+    if (temp > convert(HOT_THRESHOLD) || temp < convert(COLD_THRESHOLD)) {
       playSound(temp);
-      displayWarning(humidity);
+      displayWarning(temp, humidity);
       previousTick = elapsedTime;
     }
   }
@@ -82,6 +85,9 @@ void loop() {
   lastPressed = measurement;
   }
 
+/** Light up LED bars based on temperature severity, hot and cold. About 10f for each additional bar,
+ *  starting from ~20f.
+ */
 void lightUp(float temperature) {
   temperature = int(abs(trunc(convert(temperature) / 10)) - 2);
 
@@ -94,25 +100,23 @@ void lightUp(float temperature) {
   }
 }
 
+/** Put relevant sensor readings & calculated heat index to the SSD1306 Display. */
 void displayInfo(float temp, float humidity, float heatIndex) {
   display.clearDisplay();
   display.setTextSize(1);
   display.setTextColor(WHITE);
   display.setCursor(0, 10);
+  String tempUnit = isFahrenheit ? " F" : " C";
 
-  if (isFahrenheit) {
-    display.println("Temperature: "+ String(temp) + " F");
-    display.println("\nHeat Index: " + String(heatIndex) + " F");
-  } else {
-    display.println("Temperature: " + String(temp) + " C");
-    display.println("\nHeat Index: " + String(heatIndex) + " C");
-  }
+  display.println("Temperature: "+ String(temp) + tempUnit);
+  display.println("\nHeat Index: " + String(heatIndex) + tempUnit);
   display.println("\nHumidity: " +String(humidity) + "%");
 
   display.display();
 }
 
-void displayWarning(float humidity) {
+/** Put warnings to the screen based on hot/cold thresholds. */
+void displayWarning(float temperature, float humidity) {
   display.clearDisplay();
   display.setTextColor(WHITE);
   display.setTextSize(1);
@@ -121,25 +125,37 @@ void displayWarning(float humidity) {
   display.println("");
   display.drawBitmap(51, 5, warningIcon, 24, 24, 1);
 
-  display.setCursor(2, 34);
-  display.println("Annoyingly high temperature!");
-
-  if (humidity > 90) {
-    display.println("\n Humidity dangerously high: " + String(humidity) + "%");
+  if (temperature > convert(HOT_THRESHOLD)) {
+    display.setCursor(13, 13);
+    display.println("Hot!");
+    display.setCursor(89, 13);
+    display.println("Hot!");
+  } else {
+    display.setCursor(13, 13);
+    display.println("Cold!");
+    display.setCursor(89, 13);
+    display.println("Cold!");
   }
+  String tempUnit = isFahrenheit ? " F" : " C";
+
+  display.setCursor(0, 33);
+  display.println("Temperature: " + String(temperature) + tempUnit);
+  display.println("\nHumidity: " + String(humidity) + "%");
+
   display.display();
 
   delay(2000);
 }
 
+/** Buzz the buzzer with a sound that increases in pitch the higher the temperature, and vice versa. */
 void playSound(float temperature) {
   tone(SPEAKER_PIN, 30 * temperature, 100);
 }
 
+/** Convert temperature to celsius or fahrenheit, or do nothing depending on the desired unit. */
 float convert(float temperature) {
   if (!isFahrenheit) {
     return (temperature * 9/5) + 32;
   }
   return temperature;
 }
-
